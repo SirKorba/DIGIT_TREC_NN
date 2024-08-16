@@ -1,6 +1,7 @@
+use digitrec_ai;
 use digitrec_ai::Network;
 
 
 fn main() {
-    println!("Hello, world!");
+    digitrec_ai::start_app();
 }
