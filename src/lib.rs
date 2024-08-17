@@ -1,6 +1,7 @@
 use std::fs;
 use image::ImageReader;
 use serde_json;
+use serde_json::Value;
 
 
 
@@ -44,16 +45,17 @@ pub fn start_app() {
         Err(e) => eprintln!("Error: {e}"),
     }
 
-    parse_dataset();
+    parse_dataset("dataset/training", "data/dataset/dataset.json");
+    get_dataset("data/dataset/dataset.json");
 }
 
-fn parse_dataset() {
+fn parse_dataset(input_dataset:&str, output_dataset:&str) {
 
     let mut numbers_paths:Vec<String> = Vec::new();
     let mut num_images:Vec<(String, u32)> = Vec::new();
     let mut dataset:Vec<(Vec<u8>, u32)> = Vec::new();
 
-    match fs::read_dir("dataset/training") {
+    match fs::read_dir(input_dataset) {
         Err(e) => eprintln!("Error: {e}"),
         Ok(paths) => {
             for path in paths {
@@ -65,7 +67,7 @@ fn parse_dataset() {
 
     for path in numbers_paths {
 
-        let n:u32 = path["dataset/training".len()+1..].parse().unwrap();
+        let n:u32 = path[input_dataset.len()+1..].parse().unwrap();
 
         match fs::read_dir(path) {
             Err(e) => eprintln!("Error: {e}"),
@@ -85,14 +87,18 @@ fn parse_dataset() {
         dataset.append(&mut vec!((data, n)));
     }
 
-    fs::write("data/dataset/dataset.json", serde_json::to_string_pretty(&dataset).unwrap())
+    fs::write(output_dataset, serde_json::to_string_pretty(&dataset).unwrap())
         .expect("Can't write to file");
+}
 
-    // let s = fs::read_to_string("data/dataset/dataset.json").unwrap();
+fn get_dataset(dataset_file:&str) -> Vec<Value> {
 
-    // let mut json_data:serde_json::Value = serde_json::from_str(&s)
-    //     .expect("Can't parse json");
+    let s = fs::read_to_string(dataset_file).unwrap();
 
-    // println!("{}", json_data.as_array().unwrap()[0]);
+    let mut json_data:serde_json::Value = serde_json::from_str(&s)
+        .expect("Can't parse json");
 
+    let result = json_data.as_array().unwrap().clone();
+
+    result
 }
