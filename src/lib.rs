@@ -27,20 +27,20 @@ impl Network {
             let mut _d_layer:Vec<f64> = Vec::new();
             let mut _w_layer:Vec<Vec<f64>> = Vec::new();
 
-            disps.push(_d_layer.clone());
+            disps.push(_d_layer.clone());                                   // Push layers of neuronetwork to disps and weights
             weights.push(_w_layer.clone());
 
             for j in 0..*n {
-                disps[i-1].push(rng.gen());
-                weights[i-1].push(Vec::new());
+                disps[i-1].push(rng.gen());                                 // Push disp to disps
+                weights[i-1].push(Vec::new());                              // Push edge massive to weights
 
-                for k in 0..n_neur[i-1] {
-                    weights[i-1][j as usize].push(rng.gen());
+                for _ in 0..n_neur[i-1] {
+                    weights[i-1][j as usize].push(rng.gen());               //Push weight to edge
                 }
             }
         }
 
-        Network {
+        Network {                                                           // Return instance of neuro network
             n_neur,
             weights,
             disps,
@@ -62,7 +62,7 @@ fn sygmoid(x: f64) -> f64 {                                                 // A
 
 pub fn start_app() {
 
-    match fs::create_dir("data") {
+    match fs::create_dir("data") {                                   // Create directories
         Ok(_) => (),
         Err(e) => eprintln!("Error: {e}"),
     }
