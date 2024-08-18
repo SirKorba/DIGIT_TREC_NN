@@ -2,29 +2,61 @@ use std::fs;
 use image::ImageReader;
 use serde_json;
 use serde_json::Value;
+use rand::prelude::*;
 
 
 
 pub struct Network {
-    n_neur:[i32;3],                                         // [784, 30, 10]
+    n_neur:Vec<u32>,                                                        // Example: [784, 30, 10]
+    weights:Vec<Vec<Vec<f64>>>,
+    disps:Vec<Vec<f64>>,
 }
 
 impl Network {
 
-    pub fn new(self, n_neur:[i32;3]) -> Network {           // Create NeuroWide
-        Network{n_neur}
+    pub fn new(n_neur:Vec<u32>) -> Network {                                // Create NeuroNetwork
+        
+        let mut weights:Vec<Vec<Vec<f64>>> = Vec::new();
+        let mut disps:Vec<Vec<f64>> = Vec::new();
+        let mut rng = rand::thread_rng();
+
+        for (i, n) in n_neur.iter().enumerate() {
+            
+            if i == 0 {continue;}
+
+            let mut _d_layer:Vec<f64> = Vec::new();
+            let mut _w_layer:Vec<Vec<f64>> = Vec::new();
+
+            disps.push(_d_layer.clone());
+            weights.push(_w_layer.clone());
+
+            for j in 0..*n {
+                disps[i-1].push(rng.gen());
+                weights[i-1].push(Vec::new());
+
+                for k in 0..n_neur[i-1] {
+                    weights[i-1][j as usize].push(rng.gen());
+                }
+            }
+        }
+
+        Network {
+            n_neur,
+            weights,
+            disps,
+        }
     }
 
-    pub fn feed_forward(self) {                             // Start NeuroWide
+    pub fn feed_forward(self) {                                             // Start NeuroNetwork
 
     }
 
-    pub fn SGD() {                                          // Educate NeuroWide
+    pub fn SGD(self) {                                                      // Educate NeuroNetwork
 
     }
 } 
 
-fn sygmoid(x: f64) -> f64 {                                 // Activate func
+fn sygmoid(x: f64) -> f64 {                                                 // Activate func
     1.0/(1.0 + x.exp())
 }
 
@@ -46,7 +78,6 @@ pub fn start_app() {
     }
 
     parse_dataset("dataset/training", "data/dataset/dataset.json");
-    get_dataset("data/dataset/dataset.json");
 }
 
 fn parse_dataset(input_dataset:&str, output_dataset:&str) {
@@ -74,7 +105,7 @@ fn parse_dataset(input_dataset:&str, output_dataset:&str) {
             Ok(paths) => {
                 for ph in paths {
                     let p = ph.unwrap().path();
-                    num_images.append(&mut vec!((String::from(p.to_str().unwrap()), n)));
+                    num_images.push((String::from(p.to_str().unwrap()), n));
                 }
             }
         }
@@ -84,18 +115,18 @@ fn parse_dataset(input_dataset:&str, output_dataset:&str) {
         
         let data = ImageReader::open(path).unwrap().decode().unwrap().grayscale().into_bytes();
 
-        dataset.append(&mut vec!((data, n)));
+        dataset.push((data, n));
     }
 
     fs::write(output_dataset, serde_json::to_string_pretty(&dataset).unwrap())
         .expect("Can't write to file");
 }
 
-fn get_dataset(dataset_file:&str) -> Vec<Value> {
+pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
 
     let s = fs::read_to_string(dataset_file).unwrap();
 
-    let mut json_data:serde_json::Value = serde_json::from_str(&s)
+    let json_data:serde_json::Value = serde_json::from_str(&s)
         .expect("Can't parse json");
 
     let result = json_data.as_array().unwrap().clone();

@@ -3,5 +3,10 @@ use digitrec_ai::Network;
 
 
 fn main() {
-    digitrec_ai::start_app();
+
+    let neuro_netw = Network::new(vec![3, 2, 1]);
+
+    // digitrec_ai::start_app();
+
+    // let dataset = digitrec_ai::get_dataset("data/dataset/dataset.json");
 }
