@@ -1,9 +1,9 @@
 use std::fs;
+use std::iter::zip;
 use image::ImageReader;
 use serde_json;
 use serde_json::Value;
 use rand::prelude::*;
-
 
 
 pub struct Network {
@@ -47,8 +47,15 @@ impl Network {
         }
     }
 
-    pub fn feed_forward(self) {                                             // Start NeuroNetwork
+    pub fn feed_forward(self, input_data:Vec<Value>) -> f64 {                                             // Start NeuroNetwork
+        
+        let output:f64 = 0.0;
 
+        for br in input_data {
+            
+        }
+
+        output
     }
 
     pub fn SGD(self) {                                                      // Educate NeuroNetwork
@@ -56,8 +63,8 @@ impl Network {
     }
 } 
 
-fn sygmoid(x: f64) -> f64 {                                                 // Activate func
-    1.0/(1.0 + x.exp())
+fn sigmoid(x: f64) -> f64 {                                                 // Activate func
+    1.0/(1.0 + (-x).exp())
 }
 
 pub fn start_app() {

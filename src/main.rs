@@ -9,4 +9,5 @@ fn main() {
     // digitrec_ai::start_app();
 
     // let dataset = digitrec_ai::get_dataset("data/dataset/dataset.json");
+    // println!("{}", dataset[0][0][0].as_i64().unwrap() + 1);
 }
