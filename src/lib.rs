@@ -141,7 +141,29 @@ pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
 
 // }
 
-fn mul_matr(a: &Vec<f64>, b: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+fn mul_matr(a:&Vec<f64>, b:&Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+
+    let mut result: Vec<Vec<f64>> = Vec::new();
+
+    result.push(Vec::new());
+
+    for _ in 0..b[0].len() {
+        result[0].push(0.0);
+    }
+
+    for s in 0..b[0].len() {
+
+        for (i, ela) in a.iter().enumerate() {
+
+            let elb = b[i][s];
+
+            result[0][s] += ela * elb;
+            print!("{} * {} +", ela, elb);
+        }
+        print!("\n");
+    }
+
+    result
 }
 
 
@@ -152,10 +174,9 @@ mod tests {
     #[test]
     fn dot_test() {
         
-        let a:Vec<f64> = vec![1.0, 2.0, 3.0];
-        let b:Vec<Vec<f64>> = vec![vec![5.0, 4.0, 2.0], vec![1.0, 4.0, 6.0], vec![3.0, 8.0, 3.0]];
-        println!("{:?}", dot(&a, &b));
-        assert_eq!(dot(&a, &b), vec![vec![16.0, 36.0, 23.0]])
+        let a:Vec<f64> = vec![0.5, 2.4, 6.8, 0.1];
+        let b:Vec<Vec<f64>> = vec![vec![5.0, 4.0, 2.0], vec![1.0, 4.0, 6.0], vec![3.0, 8.0, 3.0], vec![4.4, 7.4, 3.1]];
+        assert_eq!(mul_matr(&a, &b), vec![vec![25.74, 66.74, 36.11]])
 
     }
 }
