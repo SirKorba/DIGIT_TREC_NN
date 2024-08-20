@@ -51,10 +51,6 @@ impl Network {
         
         let output:f64 = 0.0;
 
-        for br in input_data {
-            
-        }
-
         output
     }
 
@@ -139,4 +135,8 @@ pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
     let result = json_data.as_array().unwrap().clone();
 
     result
+}
+
+fn dot(a: Vec<f64>, b: Vec<Vec<f64>>) {
+
 }
