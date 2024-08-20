@@ -137,6 +137,25 @@ pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
     result
 }
 
-fn dot(a: Vec<f64>, b: Vec<Vec<f64>>) {
+// fn dot(a: &Vec<f64>, b: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
 
+// }
+
+fn mul_matr(a: &Vec<f64>, b: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dot_test() {
+        
+        let a:Vec<f64> = vec![1.0, 2.0, 3.0];
+        let b:Vec<Vec<f64>> = vec![vec![5.0, 4.0, 2.0], vec![1.0, 4.0, 6.0], vec![3.0, 8.0, 3.0]];
+        println!("{:?}", dot(&a, &b));
+        assert_eq!(dot(&a, &b), vec![vec![16.0, 36.0, 23.0]])
+
+    }
 }
