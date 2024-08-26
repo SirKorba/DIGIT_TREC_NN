@@ -7,7 +7,7 @@ use rand::prelude::*;
 
 
 pub struct Network {
-    n_neur:Vec<u32>,                                                        // Example: [784, 30, 10]
+    n_neur:Vec<u32>,                                                                                     // Example: [784, 30, 10]
     weights:Vec<Vec<Vec<f64>>>,
     disps:Vec<Vec<f64>>,
 }
@@ -27,45 +27,45 @@ impl Network {
             let mut _d_layer:Vec<f64> = Vec::new();
             let mut _w_layer:Vec<Vec<f64>> = Vec::new();
 
-            disps.push(_d_layer.clone());                                   // Push layers of neuronetwork to disps and weights
+            disps.push(_d_layer.clone());                                                       // Push layers of neuronetwork to disps and weights
             weights.push(_w_layer.clone());
 
             for j in 0..*n {
-                disps[i-1].push(rng.gen());                                 // Push disp to disps
-                weights[i-1].push(Vec::new());                              // Push edge massive to weights
+                disps[i-1].push(rng.gen());                                                         // Push disp to disps
+                weights[i-1].push(Vec::new());                                                  // Push edge massive to weights
 
                 for _ in 0..n_neur[i-1] {
-                    weights[i-1][j as usize].push(rng.gen());               //Push weight to edge
+                    weights[i-1][j as usize].push(rng.gen());                           //Push weight to edge
                 }
             }
         }
 
-        Network {                                                           // Return instance of neuro network
+        Network {                                                                                                   // Return instance of neuro network
             n_neur,
             weights,
             disps,
         }
     }
 
-    pub fn feed_forward(self, input_data:Vec<Value>) -> f64 {                                             // Start NeuroNetwork
+    pub fn feed_forward(self, input_data:Vec<Value>) -> f64 {           // Start NeuroNetwork
         
         let output:f64 = 0.0;
 
         output
     }
 
-    pub fn SGD(self) {                                                      // Educate NeuroNetwork
+    pub fn SGD(self) {                                                                                              // Educate NeuroNetwork
 
     }
 } 
 
-fn sigmoid(x: f64) -> f64 {                                                 // Activate func
+fn sigmoid(x: f64) -> f64 {                                                                                     // Activate func
     1.0/(1.0 + (-x).exp())
 }
 
 pub fn start_app() {
 
-    match fs::create_dir("data") {                                   // Create directories
+    match fs::create_dir("data") {                                                               // Create directories
         Ok(_) => (),
         Err(e) => eprintln!("Error: {e}"),
     }
@@ -80,7 +80,10 @@ pub fn start_app() {
         Err(e) => eprintln!("Error: {e}"),
     }
 
-    parse_dataset("dataset/training", "data/dataset/dataset.json");
+    parse_dataset(
+        "dataset/training", 
+        "data/dataset/dataset.json"
+    );
 }
 
 fn parse_dataset(input_dataset:&str, output_dataset:&str) {
@@ -116,13 +119,21 @@ fn parse_dataset(input_dataset:&str, output_dataset:&str) {
 
     for (path, n) in num_images {
         
-        let data = ImageReader::open(path).unwrap().decode().unwrap().grayscale().into_bytes();
-
+        let data = ImageReader::open(path)
+            .unwrap()
+            .decode()
+            .unwrap()
+            .grayscale()
+            .into_bytes();
+        
         dataset.push((data, n));
     }
 
-    fs::write(output_dataset, serde_json::to_string_pretty(&dataset).unwrap())
+    fs::write(
+        output_dataset, 
+        serde_json::to_string_pretty(&dataset).unwrap())
         .expect("Can't write to file");
+
 }
 
 pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
@@ -141,26 +152,22 @@ pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
 
 // }
 
-fn mul_matr(a:&Vec<f64>, b:&Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+fn mul_matr(a:&Vec<f64>, b:&Vec<Vec<f64>>) -> Vec<f64> {
 
-    let mut result: Vec<Vec<f64>> = Vec::new();
+    let mut result: Vec<f64> = Vec::new();
 
-    result.push(Vec::new());
-
-    for _ in 0..b[0].len() {
-        result[0].push(0.0);
+    for _ in 0..b.len() {
+        result.push(0.0);
     }
 
-    for s in 0..b[0].len() {
+    for i in 0..b.len() {
 
-        for (i, ela) in a.iter().enumerate() {
+        let mut el:f64 = 0.0;
 
-            let elb = b[i][s];
+        for j in 0..a.len() {
 
-            result[0][s] += ela * elb;
-            print!("{} * {} +", ela, elb);
+            result[i] += a[j] * b[i][j]
         }
-        print!("\n");
     }
 
     result
@@ -172,11 +179,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn dot_test() {
+    fn mulmatr_test() {
         
-        let a:Vec<f64> = vec![0.5, 2.4, 6.8, 0.1];
-        let b:Vec<Vec<f64>> = vec![vec![5.0, 4.0, 2.0], vec![1.0, 4.0, 6.0], vec![3.0, 8.0, 3.0], vec![4.4, 7.4, 3.1]];
-        assert_eq!(mul_matr(&a, &b), vec![vec![25.74, 66.74, 36.11]])
+        let a:Vec<f64> = vec![0.5, 2.4, 6.8];
+        let b:Vec<Vec<f64>> = vec![
+            vec![5.0, 4.0, 2.0], 
+            vec![1.0, 4.0, 6.0], 
+            vec![3.0, 8.0, 3.0], 
+            vec![4.4, 7.4, 3.1]
+            ];
+        assert_eq!(mul_matr(&a, &b), vec![25.7, 50.9, 41.099999999999994, 41.04])
 
     }
 }
