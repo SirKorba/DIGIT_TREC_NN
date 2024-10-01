@@ -52,13 +52,19 @@ impl Network {
         }
     }
 
-    pub fn feed_forward(self, input_data:Vec<Value>) -> f64 {           // Start NeuroNetwork
+    pub fn feed_forward(self, input_data:Vec<f64>) -> Vec<f64> {           // Start NeuroNetwork
         
-        let output:f64 = 0.0;
+        let mut output:Vec<f64> = Vec::new();
+        let mut buf:Vec<f64> = input_data;
 
-        // for (w, d) in zip(self.weights, self.disps) {
+        for (w, d) in zip(self.weights, self.disps) {
 
-        // }
+            buf = sigmoid(dot(buf.clone(), w));
+
+            for (i, el) in buf.iter_mut().enumerate() {
+                output.push(*el + d[i])
+            }
+        }
 
         output
     }
@@ -164,11 +170,16 @@ pub fn get_dataset() -> Vec<Value> {
     result
 }
 
-// fn dot(input: &Vec<f64>, w: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+fn dot(input: Vec<f64>, w: Vec<Vec<f64>>) -> Vec<f64> {
 
-// }
+    let mut result:Vec<f64> = Vec::new();
 
-fn mul_matr(input:&Vec<f64>, weights:&Vec<Vec<f64>>) -> Vec<f64> {
+    result = mul_matr(input, w);
+
+    result
+}
+
+fn mul_matr(input:Vec<f64>, weights:Vec<Vec<f64>>) -> Vec<f64> {
 
     let mut result: Vec<f64> = Vec::new();
 
@@ -220,7 +231,7 @@ mod tests {
             vec![1.0, 4.0, 6.0]
             ];
 
-        assert_eq!(mul_matr(&a, &b), vec![25.7, 50.9])
+        assert_eq!(mul_matr(a, b), vec![25.7, 50.9])
 
     }
 }
