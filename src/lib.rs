@@ -56,6 +56,10 @@ impl Network {
         
         let output:f64 = 0.0;
 
+        // for (w, d) in zip(self.weights, self.disps) {
+
+        // }
+
         output
     }
 
@@ -64,8 +68,15 @@ impl Network {
     }
 } 
 
-fn sigmoid(x: f64) -> f64 {                                                                                     // Activate func
-    1.0/(1.0 + (-x).exp())
+fn sigmoid(x: Vec<f64>) -> Vec<f64> {                                                          // Activate func
+    
+    let mut result:Vec<f64> = Vec::new();
+
+    for el in x {
+        result.push(1.0/(1.0 + (-el).exp()))
+    }
+
+    result
 }
 
 pub fn start_app() {
@@ -153,7 +164,7 @@ pub fn get_dataset() -> Vec<Value> {
     result
 }
 
-// fn dot(a: &Vec<f64>, b: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+// fn dot(input: &Vec<f64>, w: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
 
 // }
 
@@ -187,13 +198,6 @@ mod tests {
         /*
             A:
             {0.5     2.4     6.8}
-         */
-        
-        let a:Vec<f64> = vec![0.5, 2.4, 6.8];
-
-        /*
-            A:
-            {0.5     2.4     6.8}
 
             B:
             {5.0     1.0
@@ -208,6 +212,8 @@ mod tests {
 
             Матрицы перемножаются и ответ возвращается :3
          */
+        
+        let a:Vec<f64> = vec![0.5, 2.4, 6.8];
 
         let b:Vec<Vec<f64>> = vec![
             vec![5.0, 4.0, 2.0], 
