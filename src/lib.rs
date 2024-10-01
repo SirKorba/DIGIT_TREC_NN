@@ -5,6 +5,11 @@ use serde_json;
 use serde_json::Value;
 use rand::prelude::*;
 
+const DATA_PATH:&str = "data";
+const DATASET_PATH:&str = "data/dataset";
+const EDRESULTS_PATH:&str = "data/edResults";
+const TRAININGDATA_PATH:&str = "dataset/training";
+pub const COMPLETEDATASET_PATH:&str = "data/dataset/dataset.json";
 
 pub struct Network {
     n_neur:Vec<u32>,                                                                                     // Example: [784, 30, 10]
@@ -65,24 +70,24 @@ fn sigmoid(x: f64) -> f64 {                                                     
 
 pub fn start_app() {
 
-    match fs::create_dir("data") {                                                               // Create directories
+    match fs::create_dir(DATA_PATH) {                                                               // Create directories
         Ok(_) => (),
         Err(e) => eprintln!("Error: {e}"),
     }
 
-    match fs::create_dir("data/dataset") {
+    match fs::create_dir(DATASET_PATH) {
         Ok(_) => (),
         Err(e) => eprintln!("Error: {e}"),
     }
 
-    match fs::create_dir("data/edResults") {
+    match fs::create_dir(EDRESULTS_PATH) {
         Ok(_) => (),
         Err(e) => eprintln!("Error: {e}"),
     }
 
     parse_dataset(
-        "dataset/training", 
-        "data/dataset/dataset.json"
+        TRAININGDATA_PATH, 
+        COMPLETEDATASET_PATH
     );
 }
 
@@ -136,9 +141,9 @@ fn parse_dataset(input_dataset:&str, output_dataset:&str) {
 
 }
 
-pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
+pub fn get_dataset() -> Vec<Value> {
 
-    let s = fs::read_to_string(dataset_file).unwrap();
+    let s = fs::read_to_string(COMPLETEDATASET_PATH).unwrap();
 
     let json_data:serde_json::Value = serde_json::from_str(&s)
         .expect("Can't parse json");
@@ -152,21 +157,19 @@ pub fn get_dataset(dataset_file:&str) -> Vec<Value> {
 
 // }
 
-fn mul_matr(a:&Vec<f64>, b:&Vec<Vec<f64>>) -> Vec<f64> {
+fn mul_matr(input:&Vec<f64>, weights:&Vec<Vec<f64>>) -> Vec<f64> {
 
     let mut result: Vec<f64> = Vec::new();
 
-    for _ in 0..b.len() {
+    for _ in 0..weights.len() {
         result.push(0.0);
     }
 
-    for i in 0..b.len() {
+    for i in 0..weights.len() {
+    
+        for j in 0..input.len() {
 
-        let mut el:f64 = 0.0;
-
-        for j in 0..a.len() {
-
-            result[i] += a[j] * b[i][j]
+            result[i] += input[j] * weights[i][j]
         }
     }
 
@@ -180,15 +183,38 @@ mod tests {
 
     #[test]
     fn mulmatr_test() {
+
+        /*
+            A:
+            {0.5     2.4     6.8}
+         */
         
         let a:Vec<f64> = vec![0.5, 2.4, 6.8];
+
+        /*
+            A:
+            {0.5     2.4     6.8}
+
+            B:
+            {5.0     1.0
+            4.0     4.0
+            2.0     6.0}
+
+            В функцию подаётся две матрицы (A и B)
+            Матрица A содержит веса прошлого слоя
+            Матрица B содержит нейроны нынешнего
+            слоя и веса узлов, направленных с
+            прошлого слоя к данному
+
+            Матрицы перемножаются и ответ возвращается :3
+         */
+
         let b:Vec<Vec<f64>> = vec![
             vec![5.0, 4.0, 2.0], 
-            vec![1.0, 4.0, 6.0], 
-            vec![3.0, 8.0, 3.0], 
-            vec![4.4, 7.4, 3.1]
+            vec![1.0, 4.0, 6.0]
             ];
-        assert_eq!(mul_matr(&a, &b), vec![25.7, 50.9, 41.099999999999994, 41.04])
+
+        assert_eq!(mul_matr(&a, &b), vec![25.7, 50.9])
 
     }
 }
